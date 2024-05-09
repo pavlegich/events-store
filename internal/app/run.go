@@ -39,6 +39,15 @@ func Run() error {
 		return fmt.Errorf("Run: parse flags failed %w", err)
 	}
 
+	// Database
+	// db := clickhouse.OpenDB(&clickhouse.Options{
+	// 	Addr: []string{cfg.DSN},
+	// })
+	// err = db.PingContext(ctx)
+	// if err != nil {
+	// 	return fmt.Errorf("Run: db failed %w", err)
+	// }
+
 	// Router
 	ctrl := handlers.NewController(ctx, cfg)
 	router, err := ctrl.BuildRoute(ctx)
