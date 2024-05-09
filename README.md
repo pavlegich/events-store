@@ -44,7 +44,8 @@ Task description [Link](https://github.com/pavlegich/events-store/blob/main/SPEC
 | `SERVER_BINARY_NAME` | `server` | Наименование создаваемого бинарного файла для запуска приложения. |
 | `SERVER_PACKAGE_PATH` | `./cmd/server` | Путь к бинарному файлу для запуска приложения. |
 | `SERVER_ADDR` | `localhost:8080` | Адрес и порт, где будет запущено приложение. |
-| `DB_NAME` | `postgres` | Наименование базы данных. |
-| `DB_HOST` | `db` | Наименование хоста для базы данных. |
+| `DB_DRIVER` | `clickhouse` | Наименование базы данных. |
+| `DB_ADDR` | `localhost:9000` | Адрес и порт для подключения к базе данных. |
+| `DB_NAME` | `events` | Наименование базы данных. |
 | `DATABASE_DSN` | | Строка подключения к базе данных. |
 | `DOC_ADDR` | `localhost:6060` | Адрес и порт, где будет запущен сервис с документацией к приложению. |

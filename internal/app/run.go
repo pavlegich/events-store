@@ -10,9 +10,11 @@ import (
 	"syscall"
 	"time"
 
+	_ "github.com/ClickHouse/clickhouse-go/v2"
 	_ "github.com/golang/mock/mockgen/model"
 	"github.com/pavlegich/events-store/internal/controllers/handlers"
 	"github.com/pavlegich/events-store/internal/infra/config"
+	"github.com/pavlegich/events-store/internal/infra/database"
 	"github.com/pavlegich/events-store/internal/infra/logger"
 	_ "go.uber.org/automaxprocs"
 	"go.uber.org/zap"
@@ -40,13 +42,11 @@ func Run() error {
 	}
 
 	// Database
-	// db := clickhouse.OpenDB(&clickhouse.Options{
-	// 	Addr: []string{cfg.DSN},
-	// })
-	// err = db.PingContext(ctx)
-	// if err != nil {
-	// 	return fmt.Errorf("Run: db failed %w", err)
-	// }
+	db, err := database.Init(ctx, cfg.DBDriver, cfg.DSN)
+	if err != nil {
+		return fmt.Errorf("Run: initialize database failed %w", err)
+	}
+	defer db.Close()
 
 	// Router
 	ctrl := handlers.NewController(ctx, cfg)

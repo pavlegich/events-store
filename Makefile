@@ -2,9 +2,10 @@ SERVER_BINARY_NAME = server
 SERVER_PACKAGE_PATH = ./cmd/server
 SERVER_ADDR = localhost:8080
 
-DB_HOST=localhost
-DB_NAME=postgres
-DATABASE_DSN = postgresql://${DB_HOST}:5432/${DB_NAME}
+DB_DRIVER=clickhouse
+DB_ADDR=localhost:9000
+DB_NAME=events
+DATABASE_DSN = $(DB_DRIVER)://$(DB_ADDR)/$(DB_NAME)
 # clickhouse://postgres:postgres@localhost:9000/database?dial_timeout=200ms&max_execution_time=60
 
 DOC_ADDR = localhost:6060
@@ -50,7 +51,7 @@ build/local:
 
 ## run/local: run the server locally
 run/local: build/local
-	/tmp/bin/$(SERVER_BINARY_NAME) -a=$(SERVER_ADDR) -d=$(DATABASE_DSN)
+	/tmp/bin/$(SERVER_BINARY_NAME) -a=$(SERVER_ADDR) -dsn=$(DATABASE_DSN) -d=$(DB_DRIVER)
 
 ## build: build the server with docker-compose
 build:

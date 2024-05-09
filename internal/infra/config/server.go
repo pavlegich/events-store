@@ -12,8 +12,9 @@ import (
 
 // Config contains values of server flags and environments.
 type Config struct {
-	Address string `env:"ADDRESS" json:"address"`
-	DSN     string `env:"DATABASE_DSN" json:"database_dsn"`
+	Address  string `env:"ADDRESS" json:"address"`
+	DBDriver string `env:"DB_DRIVER" json:"db_driver"`
+	DSN      string `env:"DATABASE_DSN" json:"database_dsn"`
 }
 
 // NewConfig returns new server config.
@@ -25,7 +26,8 @@ func NewConfig(ctx context.Context) *Config {
 // when launching the server.
 func (cfg *Config) ParseFlags(ctx context.Context) error {
 	flag.StringVar(&cfg.Address, "a", "localhost:8080", "HTTP-server endpoint address host:port")
-	flag.StringVar(&cfg.DSN, "d", "localhost:9000", "URI (DSN) to database")
+	flag.StringVar(&cfg.DBDriver, "d", "clickhouse", "Database driver name")
+	flag.StringVar(&cfg.DSN, "dsn", "clickhouse://localhost:9000/events", "URI (DSN) to database")
 
 	flag.Parse()
 
