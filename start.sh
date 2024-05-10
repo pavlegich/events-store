@@ -5,13 +5,13 @@ set -e
 
 cmd="$@"
 
-# wait for postgres to be ready
-until PGPASSWORD=$DB_PASSWORD psql -h $DB_HOST -U $DB_USER -c '\q'; do
-  >&2 echo "Postgres is unavailable - sleeping"
-  sleep 1
-done
+# wait for clickhouse to be ready
+# until ./clickhouse client -h $DB_HOST -u $DB_USER -d $DB_NAME; do
+#   >&2 echo "Clickhouse is unavailable - sleeping"
+#   sleep 1
+# done
 
->&2 echo "Postgres is up - executing command"
+# >&2 echo "Clickhouse is up - executing command"
 
 # make migrations
 #goose -dir ./migrations up

@@ -16,6 +16,7 @@ import (
 	"github.com/pavlegich/events-store/internal/infra/config"
 	"github.com/pavlegich/events-store/internal/infra/database"
 	"github.com/pavlegich/events-store/internal/infra/logger"
+	"github.com/pavlegich/events-store/internal/repository"
 	_ "go.uber.org/automaxprocs"
 	"go.uber.org/zap"
 )
@@ -42,7 +43,7 @@ func Run() error {
 	}
 
 	// Database
-	db, err := database.Init(ctx, cfg.DBDriver, cfg.DSN)
+	db, err := database.Init(ctx, cfg.DSN)
 	if err != nil {
 		return fmt.Errorf("Run: initialize database failed %w", err)
 	}
@@ -50,7 +51,8 @@ func Run() error {
 
 	// Router
 	ctrl := handlers.NewController(ctx, cfg)
-	router, err := ctrl.BuildRoute(ctx)
+	repo := repository.NewEventRepository(ctx, db)
+	router, err := ctrl.BuildRoute(ctx, repo)
 	if err != nil {
 		return fmt.Errorf("Run: build server route failed %w", err)
 	}

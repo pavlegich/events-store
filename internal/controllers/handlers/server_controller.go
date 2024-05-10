@@ -10,6 +10,7 @@ import (
 
 	"github.com/pavlegich/events-store/internal/controllers/middlewares"
 	"github.com/pavlegich/events-store/internal/infra/config"
+	"github.com/pavlegich/events-store/internal/repository"
 )
 
 // Controller contains database and configuration
@@ -26,13 +27,10 @@ func NewController(ctx context.Context, cfg *config.Config) *Controller {
 }
 
 // BuildRoute creates new router and appends handlers and middlewares to it.
-func (c *Controller) BuildRoute(ctx context.Context) (http.Handler, error) {
+func (c *Controller) BuildRoute(ctx context.Context, repo repository.Repository) (http.Handler, error) {
 	router := http.NewServeMux()
 
-	router.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(http.StatusOK)
-		w.Write([]byte("Hello!"))
-	})
+	eventsActivate(ctx, router, repo, c.cfg)
 
 	handler := middlewares.Recovery(router)
 	handler = middlewares.WithLogging(handler)
