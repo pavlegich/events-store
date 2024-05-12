@@ -16,8 +16,8 @@ import (
 //
 //go:generate mockgen -destination=../../mocks/mock_Service.go -package=mocks github.com/pavlegich/events-store/internal/service/event Service
 type Service interface {
-	Create(ctx context.Context, event *entities.Event) (int64, error)
-	Unload(ctx context.Context, eventType string, start time.Time, end time.Time) ([]*entities.Event, error)
+	Create(ctx context.Context, event *entities.Event) error
+	Unload(ctx context.Context, eventType string, startTime time.Time, endTime time.Time) ([]*entities.Event, error)
 }
 
 // EventService contains objects for event service.
@@ -33,20 +33,20 @@ func NewEventService(ctx context.Context, repo repo.Repository) *EventService {
 }
 
 // Create creates new requested event and requests repository to put it into the storage.
-func (s *EventService) Create(ctx context.Context, c *entities.Event) (int64, error) {
-	event, err := s.repo.CreateEvent(ctx, c)
+func (s *EventService) Create(ctx context.Context, c *entities.Event) error {
+	err := s.repo.CreateEvent(ctx, c)
 	if err != nil {
-		return -1, fmt.Errorf("Create: create event failed %w", err)
+		return fmt.Errorf("Create: create event failed %w", err)
 	}
 
-	return event.EventID, nil
+	return nil
 }
 
 // Unload gets and returns events by event's filter.
-func (s *EventService) Unload(ctx context.Context, eventType string, start time.Time, end time.Time) ([]*entities.Event, error) {
-	events, err := s.repo.GetEventsByFilter(ctx, eventType, start, end)
+func (s *EventService) Unload(ctx context.Context, eventType string, startTime time.Time, endTime time.Time) ([]*entities.Event, error) {
+	events, err := s.repo.GetEventsByFilter(ctx, eventType, startTime, endTime)
 	if err != nil {
-		return nil, fmt.Errorf("Create: create event failed %w", err)
+		return nil, fmt.Errorf("Unload: unload events failed %w", err)
 	}
 
 	return events, nil

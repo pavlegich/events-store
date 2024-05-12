@@ -1,7 +1,19 @@
 # events-store
 Service for event processing and storage.
 
-Task description [Link](https://github.com/pavlegich/events-store/blob/main/SPECIFICATION.md).
+Task description [Link](https://github.com/pavlegich/events-store/blob/main/docs/SPECIFICATION.md).
+
+## API
+
+Для понимания работы с сервисом представлены:
+
+- описание [API](https://github.com/pavlegich/events-store/blob/main/api.yaml) в файле _api.yaml_;
+
+- [примеры](https://github.com/pavlegich/events-store/blob/main/events-store.json) запросов для Postman в файле _events-store.json_. 
+
+## Возникшие вопросы и описание решения
+
+1. Пример даты из примера не соответствует существущим в Go типам для кодирования / декодирования из JSON. Написаны структура с переменной типа time.Time и методы, реализующие Marshaler и Unmarshaler интерфейсы. Также добавлен метод Scan, реализующий метод интерфейса Scanner для чтения и декодирования переменной из базы данных.
 
 ## Запуск
 
@@ -44,7 +56,6 @@ Task description [Link](https://github.com/pavlegich/events-store/blob/main/SPEC
 | `SERVER_BINARY_NAME` | `server` | Наименование создаваемого бинарного файла для запуска приложения. |
 | `SERVER_PACKAGE_PATH` | `./cmd/server` | Путь к бинарному файлу для запуска приложения. |
 | `SERVER_ADDR` | `localhost:8080` | Адрес и порт, где будет запущено приложение. |
-| `DB_DRIVER` | `clickhouse` | Наименование базы данных. |
 | `DB_ADDR` | `localhost:9000` | Адрес и порт для подключения к базе данных. |
 | `DB_NAME` | `events` | Наименование базы данных. |
 | `DATABASE_DSN` | | Строка подключения к базе данных. |

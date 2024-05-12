@@ -1,0 +1,85 @@
+openapi: 3.0.0
+info:
+  title: Сервис обработки событий
+  version: 1.0.0
+paths:
+  /api/event:
+    get:
+      summary: Получение событий
+      parameters:
+        - in: query
+          name: eventType
+          required: false
+          schema:
+            type: string
+            example: 'login'
+            description: Тип события
+        - in: query
+          name: startTime
+          required: false
+          schema:
+            type: string
+            example: '2023-04-21 15:00:00'
+            description: Левая граница временного диапозона события
+        - in: query
+          name: endTime
+          required: false
+          schema:
+            type: string
+            example: '2023-04-24 15:00:00'
+            description: Правая граница временного диапозона события
+      responses:
+        '200':
+          description: События
+          content:
+            application/json:
+              schema:
+                description: JSON-отображение событий
+                type: object
+                additionalProperties: true
+                example: '[
+                  {
+                      "id": 0,
+                      "eventType": "admin",
+                      "userID": 1,
+                      "eventTime": "2023-04-22 17:00:00",
+                      "payload": "{\"some_field\":\"some_value\"}"
+                  }
+                ]'
+        '400':
+          description: Некорректные данные
+        '404':
+          description: События не найдены
+        '500':
+          description: Внутренняя ошибка сервера
+    post:
+      summary: Отправка нового события
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                eventType:
+                  type: string
+                  description: Тип события
+                userID:
+                  type: integer
+                  description: Идентификатор пользователя
+                eventTime:
+                  type: string
+                  description: Время события
+                  example: '2023-04-20 14:00:00'
+                payload:
+                  type: string
+                  description: Содержимое события
+                  additionalProperties: true
+                  example: '{\"some_field\":\"some_value\"}'
+      responses:
+        '201':
+          description: Создано
+        '400':
+          description: Некорректные данные
+        '500':
+          description: Внутренняя ошибка сервера

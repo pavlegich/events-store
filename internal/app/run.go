@@ -11,6 +11,7 @@ import (
 	"time"
 
 	_ "github.com/ClickHouse/clickhouse-go/v2"
+	_ "github.com/ClickHouse/clickhouse-go/v2/lib/driver"
 	_ "github.com/golang/mock/mockgen/model"
 	"github.com/pavlegich/events-store/internal/controllers/handlers"
 	"github.com/pavlegich/events-store/internal/infra/config"

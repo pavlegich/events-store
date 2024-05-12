@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"errors"
 	"net/http"
+	"time"
 
 	"github.com/pavlegich/events-store/internal/entities"
 	errs "github.com/pavlegich/events-store/internal/errors"
@@ -20,6 +21,12 @@ import (
 type EventHandler struct {
 	Config  *config.Config
 	Service event.Service
+}
+
+type eventFilter struct {
+	eventType string
+	startTime time.Time
+	endTime   time.Time
 }
 
 // eventsActivate activates handler for command object.
@@ -43,6 +50,8 @@ func (h *EventHandler) HandleEvent(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case http.MethodPost:
 		h.HandleCreateEvent(w, r)
+	case http.MethodGet:
+		h.HandleGetEvent(w, r)
 	default:
 		logger.Log.Error("HandleEvent: incorrect method",
 			zap.String("method", r.Method))
@@ -78,12 +87,83 @@ func (h *EventHandler) HandleCreateEvent(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	eventID, err := h.Service.Create(ctx, &req)
+	err = h.Service.Create(ctx, &req)
 	if err != nil {
-		logger.Log.Error("HandleCreateCommand: create event failed",
+		logger.Log.Error("HandleCreateEvent: create event failed",
 			zap.Error(err))
 
-		if errors.Is(err, errs.ErrEventAlreadyExists) {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusCreated)
+}
+
+// HandleGetEvent handles request to get events by filter.
+func (h *EventHandler) HandleGetEvent(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	var req eventFilter
+	want := map[string]struct{}{
+		"eventType": {},
+		"startTime": {},
+		"endTime":   {},
+	}
+
+	queries := r.URL.Query()
+	for val := range queries {
+		_, ok := want[val]
+		if !ok {
+			logger.Log.Error("HandleGetEvent: incorrect query",
+				zap.String("query", val))
+
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
+
+		if len(queries[val]) != 1 {
+			logger.Log.Error("HandleGetEvent: incorrect number of queries",
+				zap.Int("queries_count", len(queries)))
+
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
+
+		switch val {
+		case "eventType":
+			req.eventType = queries[val][0]
+		case "startTime":
+			sTime, err := time.Parse(entities.Layout, queries[val][0])
+			if err != nil {
+				logger.Log.Error("HandleGetEvent: incorrect time format",
+					zap.String("query", queries[val][0]),
+					zap.String("layout", entities.Layout))
+
+				w.WriteHeader(http.StatusBadRequest)
+				return
+			}
+			req.startTime = sTime
+		case "endTime":
+			eTime, err := time.Parse(entities.Layout, queries[val][0])
+			if err != nil {
+				logger.Log.Error("HandleGetEvent: incorrect time format",
+					zap.String("query", queries[val][0]),
+					zap.String("layout", entities.Layout))
+
+				w.WriteHeader(http.StatusBadRequest)
+				return
+			}
+			req.endTime = eTime
+		}
+	}
+
+	events, err := h.Service.Unload(ctx, req.eventType, req.startTime, req.endTime)
+	if err != nil {
+		logger.Log.Error("HandleGetEvent: unload events failed",
+			zap.Error(err))
+
+		if errors.Is(err, errs.ErrEventNotFound) {
 			w.WriteHeader(http.StatusConflict)
 			return
 		}
@@ -93,6 +173,6 @@ func (h *EventHandler) HandleCreateEvent(w http.ResponseWriter, r *http.Request)
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(map[string]int64{"command_id": eventID})
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(events)
 }
