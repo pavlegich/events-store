@@ -11,6 +11,20 @@ Task description [Link](https://github.com/pavlegich/events-store/blob/main/docs
 
 - [примеры](https://github.com/pavlegich/events-store/blob/main/docs/events-store.json) запросов для Postman в файле _docs/events-store.json_. 
 
+## SQL Запросы
+
+1. Выборка всех уникальных eventType у которых более 1000 событий.
+
+`SELECT eventType FROM events GROUP BY eventType HAVING count(*) > 1000`
+
+2. Выборка событий которые произошли в первый день каждого месяца.
+
+`SELECT * FROM events WHERE toDayOfMonth(eventTime) == 1`
+
+3. Выборка пользователей которые совершили более 3 различных eventType.
+
+`SELECT userID FROM events GROUP BY userID HAVING count(DISTINCT eventType) > 3`
+
 ## Возникшие вопросы и описание решения
 
 1. Пример даты из примера не соответствует существущим в Go типам для кодирования / декодирования из JSON. Написаны структура с переменной типа time.Time и методы, реализующие Marshaler и Unmarshaler интерфейсы. Также добавлен метод Scan, реализующий метод интерфейса Scanner для чтения и декодирования переменной из базы данных.
