@@ -7,13 +7,17 @@ Task description [Link](https://github.com/pavlegich/events-store/blob/main/docs
 
 Для понимания работы с сервисом представлены:
 
-- описание [API](https://github.com/pavlegich/events-store/blob/main/api.yaml) в файле _api.yaml_;
+- описание [API](https://github.com/pavlegich/events-store/blob/main/docs/api.yaml) в файле _docs/api.yaml_;
 
-- [примеры](https://github.com/pavlegich/events-store/blob/main/events-store.json) запросов для Postman в файле _events-store.json_. 
+- [примеры](https://github.com/pavlegich/events-store/blob/main/docs/events-store.json) запросов для Postman в файле _docs/events-store.json_. 
 
 ## Возникшие вопросы и описание решения
 
 1. Пример даты из примера не соответствует существущим в Go типам для кодирования / декодирования из JSON. Написаны структура с переменной типа time.Time и методы, реализующие Marshaler и Unmarshaler интерфейсы. Также добавлен метод Scan, реализующий метод интерфейса Scanner для чтения и декодирования переменной из базы данных.
+
+2. Скрипты для создания и миграций таблиц находятся в директории _migrations_.
+
+3. [Пример](https://github.com/pavlegich/events-store/blob/main/configs/.env.example) файла конфигурации расположен по пути _configs/.env.example_.
 
 ## Запуск
 
@@ -47,6 +51,8 @@ Task description [Link](https://github.com/pavlegich/events-store/blob/main/docs
 | `DB_USER` | `default` | Имя пользователя для базы данных. |
 | `DB_NAME` | `events` | Наименование базы данных. |
 | `DB_HOST` | `db` | Наименование хоста для базы данных. |
+| `GOOSE_DRIVER` | | Драйвер, используемый Goose для миграции базы данных. |
+| `GOOSE_DBSTRING` | | Строка подключения, используемая Goose для миграции базы данных. |
 | `DATABASE_DSN` | | Строка подключения к базе данных. |
 
 ## Makefile Параметры запуска

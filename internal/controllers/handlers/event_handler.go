@@ -87,6 +87,16 @@ func (h *EventHandler) HandleCreateEvent(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
+	if req.EventType == "" || req.UserID == 0 {
+		logger.Log.Error("HandleCreateEvent: event type or user id are empty",
+			zap.String("eventType", req.EventType),
+			zap.Int64("userID", req.UserID),
+			zap.Error(err))
+
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
 	err = h.Service.Create(ctx, &req)
 	if err != nil {
 		logger.Log.Error("HandleCreateEvent: create event failed",

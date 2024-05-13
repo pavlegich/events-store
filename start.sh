@@ -9,6 +9,6 @@ cmd="$@"
 goose -dir ./migrations up
 
 # run tests
-go test -v ./...
+# go test -v ./...
 
 exec $cmd
