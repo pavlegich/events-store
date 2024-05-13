@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  events-store:
+    build: ./
+    command: ./start.sh ./events-store
+    depends_on:
+      db:
+        condition: service_healthy
+    env_file:
+      - configs/.env
+    ports:
+      - "8080:8080"
+
+  db:
+    restart: always
+    image: clickhouse/clickhouse-server
+    ports:
+      - "8123:8123"
+      - "9001:9000"
+    volumes:
+      - ./.database/clickhouse/data:/var/lib/clickhouse
+    environment:
+      - CLICKHOUSE_PASSWORD=default
+      - CLICKHOUSE_USER=default
+      - CLICKHOUSE_DB=events
+    healthcheck:
+      test: wget --no-verbose --tries=1 --spider http://localhost:8123/ping || exit 1
+

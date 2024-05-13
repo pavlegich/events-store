@@ -1,0 +1,119 @@
+{
+	"info": {
+		"_postman_id": "ffe41b0f-c177-4a6c-87f1-694c2680b7da",
+		"name": "events-store",
+		"description": "Postman collection with request examples to events-store",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "28853335"
+	},
+	"item": [
+		{
+			"name": "Post /api/event",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"eventType\": \"admin\",\n    \"userID\": 2,\n    \"eventTime\": \"2023-04-20 14:00:00\",\n    \"payload\": \"{\\\"some_field\\\":\\\"some_value\\\"}\"\n}\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/api/event",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"event"
+					]
+				},
+				"description": "A successful POST request returns `201 Created` response code."
+			},
+			"response": []
+		},
+		{
+			"name": "Get /api/event",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/api/event?eventType=admin&startTime=2023-04-20 14:00:00&endTime=2023-04-21 15:00:00",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"event"
+					],
+					"query": [
+						{
+							"key": "eventType",
+							"value": "admin"
+						},
+						{
+							"key": "startTime",
+							"value": "2023-04-20 14:00:00"
+						},
+						{
+							"key": "endTime",
+							"value": "2023-04-21 15:00:00"
+						}
+					]
+				},
+				"description": "A successful GET request typically returns `200 OK` response code."
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
